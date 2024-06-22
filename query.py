@@ -1,8 +1,8 @@
-import os
 import cv2
 import dlib
 import numpy as np
 from qdrant_client import QdrantClient
+from password import URL , APIKEY
 
 # Initialize dlib's face detector and the facial landmarks predictor
 detector = dlib.get_frontal_face_detector()
@@ -10,8 +10,7 @@ predictor = dlib.shape_predictor("DAT\\shape_predictor_68_face_landmarks.dat")
 face_rec_model = dlib.face_recognition_model_v1("DAT\\dlib_face_recognition_resnet_model_v1.dat")
 
 # Initialize QdrantApiClient with base URL
-BASE_URL = "http://localhost:32771"
-client = QdrantClient(url=BASE_URL)
+client = QdrantClient(url=URL,api_key=APIKEY)
 
 # Function to get face encodings from a single image
 def get_face_encodings(image_path):
@@ -36,7 +35,7 @@ def get_face_encodings(image_path):
     return face_encodings
 
 # Function to query Qdrant collection for similar vectors
-def query_qdrant_collection(collection_name, query_vector, limit=150):
+def query_qdrant_collection(collection_name, query_vector, limit=100):
     try:
         search_result = client.search(
             collection_name=collection_name,

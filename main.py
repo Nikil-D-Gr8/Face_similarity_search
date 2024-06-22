@@ -1,10 +1,9 @@
 import os
-import requests
-import json
 import cv2
 import dlib
 import numpy as np
 import uuid
+from password import URL , APIKEY
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 
@@ -14,8 +13,10 @@ predictor = dlib.shape_predictor("DAT\\shape_predictor_68_face_landmarks.dat")
 face_rec_model = dlib.face_recognition_model_v1("DAT\\dlib_face_recognition_resnet_model_v1.dat")
 
 # Initialize QdrantApiClient with base URL
-BASE_URL = "http://localhost:32771"
-client = QdrantClient(url=BASE_URL)
+client = QdrantClient(
+    url=URL, 
+    api_key=APIKEY,
+)
 
 # Function to create a collection in Qdrant
 def create_collection(collection_name):
@@ -36,7 +37,7 @@ def upload_to_qdrant(encoding, uuid, image_filename, collection_name):
             wait=True,
             points=[PointStruct(id=str(uuid), vector=encoding.tolist(), payload={"image": image_filename})]
         )
-        print(f"Uploaded {uuid} (from image '{image_filename}') to collection '{collection_name}' with status code {operation_info}")
+        # print(f"Uploaded {uuid} (from image '{image_filename}') to collection '{collection_name}' with status code {operation_info}")
     except Exception as e:
         print(f"Error uploading {uuid} (from image '{image_filename}') to collection '{collection_name}': {e}")
 
